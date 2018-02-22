@@ -56,7 +56,7 @@ function rebuildQuiz(){
 					adiv.innerHTML += String.fromCharCode("A".charCodeAt(0) + j) + "<input type='checkbox'></input>";
 				}				
 				adiv.innerHTML += "<textarea id='ma"+(totalQuestions - 1)+"ans"+j+"' rows='5' cols='40'>"+q.choices[j]+"</textarea>";
-				adiv.innerHTML += "<button onclick=''>x</button><br>";
+				adiv.innerHTML += "<button onclick='removeChoice("+(totalQuestions - 1)+", "+j+")'>x</button><br>";
 
 		
 				qdiv.appendChild(adiv);
@@ -82,7 +82,7 @@ function rebuildQuiz(){
 				}
 				
 				adiv.innerHTML += "<textarea id='sa"+(totalQuestions - 1)+"ans"+j+"' rows='5' cols='40'>"+q.choices[j]+"</textarea>";
-				adiv.innerHTML += "<button onclick=''>x</button><br>";
+				adiv.innerHTML += "<button onclick='removeChoice("+(totalQuestions - 1)+", "+j+")'>x</button><br>";
 
 		
 				qdiv.appendChild(adiv);
@@ -92,7 +92,19 @@ function rebuildQuiz(){
 			qdiv.innerHTML += "<hr size='3'>";
 			qPanes.appendChild(qdiv);
 		}else if(q.type == "FILL_IN"){
+			qdiv.innerHTML += "Question " + ++totalQuestions + ": ";
+			qdiv.innerHTML += "<button onclick='removeQuestion("+(totalQuestions - 1)+")'>remove</button><br>";
+			qdiv.innerHTML += "<textarea id='fiques"+(totalQuestions - 1)+"' class='qbox' rows='10' cols='60'>"+q.question+"</textarea><br>";
 
+			var adiv = document.createElement("div");
+			adiv.id = "answer" + (totalQuestions - 1);
+
+			adiv.innerHTML += "ANSWER <textarea id='fians"+(totalQuestions - 1)+"' rows='5' cols='40'>"+q.answers+"</textarea>";
+
+		
+			qdiv.appendChild(adiv);
+			qdiv.innerHTML += "<hr size='3'>";
+			qPanes.appendChild(qdiv);
 		}
 	}
 }
@@ -158,16 +170,29 @@ function saveQuizState(){
 		}	
 	}
 
-	printQuestions();
+	//printQuestions();
 }
 
 function removeQuestion(number){
 	saveQuizState();
+	questions.splice(number, 1);
+	rebuildQuiz();
+}
+
+function removeChoice(q, num){
+	saveQuizState();
+	
+	if(questions[q].choices.length <= 1) return;
+
+	questions[q].choices.splice(num, 1);
+	questions[q].totalChoices--;
 	rebuildQuiz();
 }
 
 function addChoice(qnum){
-	
+	saveQuizState();
+	rebuildQuiz();	
+
 	var q = questions[qnum];
 	var dv = document.getElementById("answer" + qnum);
 	var a = String.fromCharCode("A".charCodeAt(0) + q.totalChoices++);
@@ -175,11 +200,11 @@ function addChoice(qnum){
 	if(q.type == "MULT_ANS"){
 		dv.innerHTML += a + " <input type='checkbox'></input>";
 		dv.innerHTML += "<textarea id='ma"+qnum+"ans"+(q.totalChoices - 1)+"' rows='5' cols='40'></textarea>";
-		dv.innerHTML += "<button onclick=''>x</button><br>";
+		dv.innerHTML += "<button onclick='removeChoice("+qnum+", "+(q.totalChoices - 1)+")'>x</button><br>";
 	}else if(q.type == "SING_ANS"){
 		dv.innerHTML += a + " <input type='radio' name='ans"+qnum+"'></input>";
 		dv.innerHTML += "<textarea id='sa"+qnum+"ans"+(q.totalChoices - 1)+"' rows='5' cols='40'></textarea>";
-		dv.innerHTML += "<button onclick=''>x</button><br>";
+		dv.innerHTML += "<button onclick='removeChoice("+qnum+", "+(q.totalChoices - 1)+")'>x</button><br>";
 	}
 }
 
@@ -200,7 +225,7 @@ function addMultipleAnswerQuestion(){
 
 	adiv.innerHTML += "A <input type='checkbox'></input>";
 	adiv.innerHTML += "<textarea id='ma"+(totalQuestions - 1)+"ans0' rows='5' cols='40'></textarea>";
-	adiv.innerHTML += "<button onclick=''>x</button><br>";
+	adiv.innerHTML += "<button onclick='removeChoice("+(totalQuestions - 1)+", 0)'>x</button><br>";
 
 		
 	qdiv.appendChild(adiv);
@@ -229,7 +254,7 @@ function addSingleAnswerQuestion(){
 
 	adiv.innerHTML += "A <input type='radio' name='ans"+(totalQuestions - 1)+"'></input>";
 	adiv.innerHTML += "<textarea id='sa"+(totalQuestions - 1)+"ans0' rows='5' cols='40'></textarea>";
-	adiv.innerHTML += "<button onclick=''>x</button><br>";
+	adiv.innerHTML += "<button onclick='removeChoice("+(totalQuestions - 1)+", 0)'>x</button><br>";
 
 		
 	qdiv.appendChild(adiv);
