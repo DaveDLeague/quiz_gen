@@ -17,6 +17,9 @@ var navDiv;
 var currentQuestion;
 var questions = [];
 
+var quizComplete = false;
+var score = 0;
+
 function Question(){
 	this.type;
 	this.number;
@@ -24,6 +27,7 @@ function Question(){
 	this.choices = [];
 	this.correctAnswers = [];
 	this.userAnswers = [];
+	this.isCorrect = false;
 }
 
 window.onload = function(){
@@ -89,6 +93,18 @@ function displayQuestion(){
 			qDiv.innerHTML += currentQuestion.choices[i] + "<br>";
 			qDiv.innerHTML += "<hr size='3'>";
 		}
+		
+		if(quizComplete){
+			qDiv.innerHTML += "<b>Correct Answer:</b><br>";
+			for(var j = 0; j < currentQuestion.correctAnswers.length; j++){
+				qDiv.innerHTML += currentQuestion.choices[currentQuestion.correctAnswers[j]] + "<br><br>";
+			}
+			qDiv.innerHTML += "<b>Your Answer:</b><br>";
+			for(var j = 0; j < currentQuestion.userAnswers.length; j++){
+				qDiv.innerHTML += currentQuestion.choices[currentQuestion.userAnswers[j]] + "<br><br>";
+			}
+		}
+
 	}else if(currentQuestion.type == "SING_ANS"){
 		qDiv.innerHTML += "<hr size='3'>";
 		for(var i = 0; i < currentQuestion.choices.length; i++){
@@ -101,8 +117,23 @@ function displayQuestion(){
 			qDiv.innerHTML += currentQuestion.choices[i] + "<br>";
 			qDiv.innerHTML += "<hr size='3'>";
 		}
+
+		if(quizComplete){
+			qDiv.innerHTML += "<b>Correct Answer:</b><br>";
+			qDiv.innerHTML += currentQuestion.choices[currentQuestion.correctAnswers] + "<br><br>";
+			
+			qDiv.innerHTML += "<b>Your Answer:</b><br>";
+			qDiv.innerHTML += currentQuestion.choices[currentQuestion.userAnswers] + "<br><br>";
+		}
 	}else if(currentQuestion.type == "FILL_IN"){
 		qDiv.innerHTML += "<textarea rows='7' cols='60'>"+currentQuestion.userAnswers+"</textarea>";
+		if(quizComplete){
+			qDiv.innerHTML += "<br><b>Correct Answer:</b><br>";
+			qDiv.innerHTML += currentQuestion.correctAnswers + "<br><br>";
+			
+			qDiv.innerHTML += "<b>Your Answer:</b><br>";
+			qDiv.innerHTML += currentQuestion.userAnswers + "<br><br>";
+		}
 	}
 	qDiv.innerHTML += "<br>";
 	
@@ -117,8 +148,37 @@ function displayQuestion(){
 }	
 
 function submitQuiz(){
+	if(quizComplete) return;
 	if(!confirm("Are you sure you want to submit your quiz for grading?")) return;
+	quizComplete = true;
 	saveQuestionState();
+
+	scoreQuiz();
+	highlightButtons();
+
+	currentQuestion = questions[0];
+	displayQuestion();
+}
+
+function scoreQuiz(){
+	for(var i = 0; i < questions.length; i++){
+		if(questions[i].type == "MULT_ANS"){
+			var ca = compareArray(questions[i].correctAnswers, questions[i].userAnswers);
+			questions[i].isCorrect = ca;
+			if(ca) score++;
+		}else if(questions[i].type == "SING_ANS" || questions[i].type == "FILL_IN"){
+			if(questions[i].correctAnswers == questions[i].userAnswers){
+				questions[i].isCorrect = true;
+				score++;
+			}
+		}
+	} 
+
+	score /= totalQuestions;
+	score *= 100;
+
+	var hdr = document.getElementById("header");
+	hdr.innerHTML += "<center><h1><b>Score: "+score.toFixed(2)+"%</b></h1></center>";
 }
 
 function nextQuestion(){
@@ -138,6 +198,17 @@ function navigateTo(i){
 	currentQuestion = questions[i];
 	displayQuestion();
 }
+
+function highlightButtons(){
+	var btns = navDiv.getElementsByTagName("button");
+	for(var i = 0; i < questions.length; i++){
+		if(questions[i].isCorrect){
+			btns[i].style="background-color:green";
+		}else{
+			btns[i].style="background-color:red";
+		}
+	}
+}	
 
 function saveQuestionState(){
 	if(currentQuestion.type == "MULT_ANS"){
@@ -164,6 +235,20 @@ function saveQuestionState(){
 
 function numToChar(num){
 	return String.fromCharCode("A".charCodeAt(0) + num);
+}
+
+function compareArray(arr1, arr2){
+	if(arr1.length != arr2.length){
+		return false;
+	}
+
+	for(var i = 0; i < arr1.length; i++){
+		if(arr1[i] != arr2[i]){
+			return false;
+		}
+	}
+
+	return true;
 }
 
 </script>
