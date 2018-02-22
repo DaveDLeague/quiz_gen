@@ -31,8 +31,70 @@ window.onload = function(){
 	qButts.innerHTML += "<button onclick='submitQuiz()'>Submit Quiz and Download</button>";
 }
 
-function rebuildEditor(){
-	//qPanes.innerHTML = "";
+function rebuildQuiz(){
+	qPanes.innerHTML = "";
+	idctr = 0;
+	totalQuestions = 0;
+	var qdiv = document.createElement("div");
+	qdiv.id = "qdiv" + idctr++;
+
+	for(var i = 0; i < questions.length; i++){
+		var q = questions[i];
+		if(q.type == "MULT_ANS"){
+			qdiv.innerHTML += "Question " + ++totalQuestions + ": ";
+			qdiv.innerHTML += "<button onclick='removeQuestion("+(totalQuestions - 1)+")'>remove</button><br>";
+			
+			qdiv.innerHTML += "<textarea id='maques"+(totalQuestions - 1)+"' class='qbox' rows='10' cols='60'>"+q.question+"</textarea><br>";
+			
+			var adiv = document.createElement("div");
+			adiv.id = "answer" + (totalQuestions - 1);
+
+			for(var j = 0; j < q.choices.length; j++){
+				if(q.answers.includes(j)){
+					adiv.innerHTML += String.fromCharCode("A".charCodeAt(0) + j) + "<input type='checkbox' checked></input>";
+				}else{				
+					adiv.innerHTML += String.fromCharCode("A".charCodeAt(0) + j) + "<input type='checkbox'></input>";
+				}				
+				adiv.innerHTML += "<textarea id='ma"+(totalQuestions - 1)+"ans"+j+"' rows='5' cols='40'>"+q.choices[j]+"</textarea>";
+				adiv.innerHTML += "<button onclick=''>x</button><br>";
+
+		
+				qdiv.appendChild(adiv);
+			}
+
+			qdiv.innerHTML += "<button onclick='addChoice("+(totalQuestions - 1)+")'>add another choice</button><br>";
+			qdiv.innerHTML += "<hr size='3'>";
+			qPanes.appendChild(qdiv);
+		}else if(q.type == "SING_ANS"){
+			qdiv.innerHTML += "Question " + ++totalQuestions + ": ";
+			qdiv.innerHTML += "<button onclick='removeQuestion("+(totalQuestions - 1)+")'>remove</button><br>";
+			
+			qdiv.innerHTML += "<textarea id='saques"+(totalQuestions - 1)+"' class='qbox' rows='10' cols='60'>"+q.question+"</textarea><br>";
+			
+			var adiv = document.createElement("div");
+			adiv.id = "answer" + (totalQuestions - 1);
+
+			for(var j = 0; j < q.choices.length; j++){
+				if(q.answers == j){
+					adiv.innerHTML += String.fromCharCode("A".charCodeAt(0) + j) + "<input type='radio' name='ans"+(totalQuestions - 1)+"' checked></input>";
+				}else{
+					adiv.innerHTML += String.fromCharCode("A".charCodeAt(0) + j) + "<input type='radio' name='ans"+(totalQuestions - 1)+"'></input>";
+				}
+				
+				adiv.innerHTML += "<textarea id='sa"+(totalQuestions - 1)+"ans"+j+"' rows='5' cols='40'>"+q.choices[j]+"</textarea>";
+				adiv.innerHTML += "<button onclick=''>x</button><br>";
+
+		
+				qdiv.appendChild(adiv);
+			}
+
+			qdiv.innerHTML += "<button onclick='addChoice("+(totalQuestions - 1)+")'>add another choice</button><br>";
+			qdiv.innerHTML += "<hr size='3'>";
+			qPanes.appendChild(qdiv);
+		}else if(q.type == "FILL_IN"){
+
+		}
+	}
 }
 
 function saveQuizState(){
@@ -54,12 +116,15 @@ function saveQuizState(){
 			q.question = tbxs[i].value;
 			
 			var an = tbxs[++i];
-			while(an.id.toString().includes("ma")){
-				if(cbxs[cbCtr].checked){
-					q.answers.push(q.totalChoices);
-				}
+			while(an.id.toString().includes("ans")){
 				q.choices.push(an.value);
 				q.totalChoices++;
+				
+				if(!cbxs[cbCtr]) break;
+				if(cbxs[cbCtr].checked){
+					q.answers.push(q.totalChoices - 1);
+				}
+				cbCtr++;
 				if(!tbxs[++i]) break;
 				an = tbxs[i];
 			}
@@ -71,12 +136,14 @@ function saveQuizState(){
 			q.question = tbxs[i].value;
 
 			var an = tbxs[++i];
-			while(an.id.toString().includes("sa")){
-				if(rbtns[rbCtr++].checked){
-					q.answers = q.totalChoices;
-				}
+			while(an.id.toString().includes("ans")){
 				q.choices.push(an.value);
 				q.totalChoices++;
+				if(!rbtns[rbCtr]) break;
+				if(rbtns[rbCtr].checked){
+					q.answers = q.totalChoices - 1;
+				}
+				rbCtr++;
 				if(!tbxs[++i]) break;
 				an = tbxs[i];
 			}
@@ -96,9 +163,11 @@ function saveQuizState(){
 
 function removeQuestion(number){
 	saveQuizState();
+	rebuildQuiz();
 }
 
-function addChoice(qnum){	
+function addChoice(qnum){
+	
 	var q = questions[qnum];
 	var dv = document.getElementById("answer" + qnum);
 	var a = String.fromCharCode("A".charCodeAt(0) + q.totalChoices++);
