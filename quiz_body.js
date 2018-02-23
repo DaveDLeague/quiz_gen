@@ -301,33 +301,25 @@ function addFillInQuestion(){
 
 	questions.push(q);
 }
-/*questions[0] = new Question();
-questions[0].number = 1;
-questions[0].type = "MULT_ANS";
-questions[0].question = "test question 1?";
-questions[0].choices[0] = "q1m choice A";
-questions[0].choices[1] = "q1m choice B";
-questions[0].choices[2] = "q1m choice C";
-questions[0].choices[3] = "q1m choice D";
-questions[0].correctAnswers[0] = 0;
-questions[0].correctAnswers[1] = 3;
 
-questions[1] = new Question();
-questions[1].number = 2;
-questions[1].type = "SING_ANS";
-questions[1].question = "test question 2?";
-questions[1].choices[0] = "q1s choice A";
-questions[1].choices[1] = "q1s choice B";
-questions[1].choices[2] = "q1s choice C";
-questions[1].choices[3] = "q1s choice D";
-questions[1].correctAnswers = 0;
-questions[1].userAnswers = -1;
-
-questions[2] = new Question();
-questions[2].number = 3;
-questions[2].type = "FILL_IN";
-questions[2].question = "test questionFILLLLLL?";
-questions[2].correctAnswers = "FILL ME INNNNNNNNNNN";*/
+function parseStr(str){
+	var nstr = "";
+	for(var i = 0; i < str.length; i++){
+		var c = str.charAt(i);
+		if(c == '\n'){
+			nstr += "<br>"	
+		}else if(c == '\"'){
+			nstr += "\\\"";
+		}else if(c == '\t'){
+			nstr += "&nbsp&nbsp&nbsp&nbsp";
+		}else if(c == '<'){
+			nstr += "&lt";
+		}else{
+			nstr += c;
+		}
+	}
+	return nstr;
+}
 
 function buildQuestionString(){
 	var qs = "";
@@ -338,9 +330,9 @@ function buildQuestionString(){
 			qs += "questions["+i+"] = new Question();\n";
 			qs += "questions["+i+"].number="+(i+1)+";\n";
 			qs += "questions["+i+"].type=\"MULT_ANS\";\n";
-			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			qs += "questions["+i+"].question=\""+parseStr(q.question)+"\";\n";
 			for(var j = 0; j < q.choices.length; j++){
-				qs += "questions["+i+"].choices["+j+"]=\""+q.choices[j]+"\";\n";
+				qs += "questions["+i+"].choices["+j+"]=\""+parseStr(q.choices[j])+"\";\n";
 			}
 			for(var j = 0; j < q.answers.length; j++){
 				qs += "questions["+i+"].correctAnswers["+j+"]="+q.answers[j]+";\n";
@@ -349,9 +341,9 @@ function buildQuestionString(){
 			qs += "questions["+i+"] = new Question();\n";
 			qs += "questions["+i+"].number="+(i+1)+";\n";
 			qs += "questions["+i+"].type=\"SING_ANS\";\n";
-			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			qs += "questions["+i+"].question=\""+parseStr(q.question)+"\";\n";
 			for(var j = 0; j < q.choices.length; j++){
-				qs += "questions["+i+"].choices["+j+"]=\""+q.choices[j]+"\";\n";
+				qs += "questions["+i+"].choices["+j+"]=\""+parseStr(q.choices[j])+"\";\n";
 			}
 			qs += "questions["+i+"].correctAnswers="+q.answers+";\n";
 			
@@ -359,7 +351,7 @@ function buildQuestionString(){
 			qs += "questions["+i+"] = new Question();\n";
 			qs += "questions["+i+"].number="+(i+1)+";\n";
 			qs += "questions["+i+"].type=\"FILL_IN\";\n";
-			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			qs += "questions["+i+"].question=\""+parseStr(q.question)+"\";\n";
 			qs += "questions["+i+"].correctAnswers=\""+q.answers+"\";\n";
 		}
 	}
