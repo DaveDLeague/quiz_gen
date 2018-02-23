@@ -352,7 +352,7 @@ function buildQuestionString(){
 			qs += "questions["+i+"].number="+(i+1)+";\n";
 			qs += "questions["+i+"].type=\"FILL_IN\";\n";
 			qs += "questions["+i+"].question=\""+parseStr(q.question)+"\";\n";
-			qs += "questions["+i+"].correctAnswers=\""+q.answers+"\";\n";
+			qs += "questions["+i+"].correctAnswers=\""+parseStr(q.answers)+"\";\n";
 		}
 	}
 
