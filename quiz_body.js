@@ -2,6 +2,8 @@ var qbody;
 var qButts;
 var qPanes;
 
+var template;
+
 var questions = [];
 
 var idctr = 0;
@@ -23,6 +25,15 @@ window.onload = function(){
 	qButts = document.createElement("div");
 	qbody.appendChild(qPanes);
 	qbody.appendChild(qButts);
+
+	var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", "https://raw.githubusercontent.com/DaveDLeague/quiz_gen/master/quiz_template.html", true);
+    xmlHttp.send();
+    xmlHttp.onreadystatechange = function() {
+    	if(xmlHttp.readyState === XMLHttpRequest.DONE && xmlHttp.status === 200) {
+    		template = xmlHttp.responseText;
+ 		}
+   	}
 
 	qButts.innerHTML += "<button onclick='addMultipleAnswerQuestion()'>Add Multiple Answer Question</button>";
 	qButts.innerHTML += "<button onclick='addSingleAnswerQuestion()'>Add Single Answer Question</button>";
@@ -293,16 +304,18 @@ function addFillInQuestion(){
 
 function submitQuiz(){
 	saveQuizState();
-	/*
-	CODE FOR DOWNLOADING TO A FILE
+
+	//template.replace("<!--@QUIZTITLE@-->", document.getElementById("title").value);
+	//template.replace("/**@TOTALQUESTIONS@**/", questions.length);
+
 	var element = document.createElement('a');
-  	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent("text of the file"));
-  	element.setAttribute('download', "file_name.txt");
+  	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(template));
+  	element.setAttribute('download', "file_name.html");
   	element.style.display = 'none';
   	document.body.appendChild(element);
   	element.click();
   	document.body.removeChild(element);
-	*/
+	
 }
 
 function sortInputs(inpts, type){
