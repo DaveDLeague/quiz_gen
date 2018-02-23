@@ -140,8 +140,13 @@ function scoreQuiz(){
 			var ca = compareArray(questions[i].correctAnswers, questions[i].userAnswers);
 			questions[i].isCorrect = ca;
 			if(ca) score++;
-		}else if(questions[i].type == "SING_ANS" || questions[i].type == "FILL_IN"){
+		}else if(questions[i].type == "SING_ANS"){
 			if(questions[i].correctAnswers == questions[i].userAnswers){
+				questions[i].isCorrect = true;
+				score++;
+			}
+		}else if(questions[i].type == "FILL_IN"){
+			if(questions[i].correctAnswers.trim() == questions[i].userAnswers.trim()){
 				questions[i].isCorrect = true;
 				score++;
 			}
