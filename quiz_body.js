@@ -301,12 +301,78 @@ function addFillInQuestion(){
 
 	questions.push(q);
 }
+/*questions[0] = new Question();
+questions[0].number = 1;
+questions[0].type = "MULT_ANS";
+questions[0].question = "test question 1?";
+questions[0].choices[0] = "q1m choice A";
+questions[0].choices[1] = "q1m choice B";
+questions[0].choices[2] = "q1m choice C";
+questions[0].choices[3] = "q1m choice D";
+questions[0].correctAnswers[0] = 0;
+questions[0].correctAnswers[1] = 3;
+
+questions[1] = new Question();
+questions[1].number = 2;
+questions[1].type = "SING_ANS";
+questions[1].question = "test question 2?";
+questions[1].choices[0] = "q1s choice A";
+questions[1].choices[1] = "q1s choice B";
+questions[1].choices[2] = "q1s choice C";
+questions[1].choices[3] = "q1s choice D";
+questions[1].correctAnswers = 0;
+questions[1].userAnswers = -1;
+
+questions[2] = new Question();
+questions[2].number = 3;
+questions[2].type = "FILL_IN";
+questions[2].question = "test questionFILLLLLL?";
+questions[2].correctAnswers = "FILL ME INNNNNNNNNNN";*/
+
+function buildQuestionString(){
+	var qs = "";
+	
+	for(var i = 0; i < questions.length; i++){
+		var q = questions[i];		
+		if(q.type == "MULT_ANS"){
+			qs += "questions["+i+"] = new Question();\n";
+			qs += "questions["+i+"].number="+(i+1)+";\n";
+			qs += "questions["+i+"].type=\"MULT_ANS\";\n";
+			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			for(var j = 0; j < q.choices.length; j++){
+				qs += "questions["+i+"].choices["+j+"]=\""+q.choices[j]+"\";\n";
+			}
+			for(var j = 0; j < q.answers.length; j++){
+				qs += "questions["+i+"].correctAnswers["+j+"]="+q.answers[j]+";\n";
+			}
+		}else if(q.type == "SING_ANS"){
+			qs += "questions["+i+"] = new Question();\n";
+			qs += "questions["+i+"].number="+(i+1)+";\n";
+			qs += "questions["+i+"].type=\"SING_ANS\";\n";
+			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			for(var j = 0; j < q.choices.length; j++){
+				qs += "questions["+i+"].choices["+j+"]=\""+q.choices[j]+"\";\n";
+			}
+			qs += "questions["+i+"].correctAnswers="+q.answers+";\n";
+			
+		}else if(q.type == "FILL_IN"){
+			qs += "questions["+i+"] = new Question();\n";
+			qs += "questions["+i+"].number="+(i+1)+";\n";
+			qs += "questions["+i+"].type=\"FILL_IN\";\n";
+			qs += "questions["+i+"].question=\""+q.question+"\";\n";
+			qs += "questions["+i+"].correctAnswers=\""+q.answers+"\";\n";
+		}
+	}
+
+	return qs;
+}
 
 function submitQuiz(){
 	saveQuizState();
 
-	//template.replace("<!--@QUIZTITLE@-->", document.getElementById("title").value);
-	//template.replace("/**@TOTALQUESTIONS@**/", questions.length);
+	template = template.replace("<!--@QUIZTITLE@-->", document.getElementById("title").value);
+	template = template.replace("/**@TOTALQUESTIONS@**/", questions.length);
+	template = template.replace("/**@QUIZQUESTIONS@**/", buildQuestionString());	
 
 	var element = document.createElement('a');
   	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(template));
