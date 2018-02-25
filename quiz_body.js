@@ -378,14 +378,16 @@ function buildQuestionString(){
 
 function submitQuiz(){
 	saveQuizState();
-
-	template = template.replace("<!--@QUIZTITLE@-->", document.getElementById("title").value);
+	
+	var ttl = document.getElementById("title").value;
+	
+	template = template.replace("<!--@QUIZTITLE@-->", ttl);
 	template = template.replace("/**@TOTALQUESTIONS@**/", questions.length);
 	template = template.replace("/**@QUIZQUESTIONS@**/", buildQuestionString());	
 
 	var element = document.createElement('a');
   	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(template));
-  	element.setAttribute('download', "file_name.html");
+  	element.setAttribute('download', ttl + ".html");
   	element.style.display = 'none';
   	document.body.appendChild(element);
   	element.click();
