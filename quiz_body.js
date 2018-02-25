@@ -27,7 +27,7 @@ window.onload = function(){
 	qbody.appendChild(qButts);
 
 	var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", "https://raw.githubusercontent.com/DaveDLeague/quiz_gen/master/quiz_template.html", true);
+    xmlHttp.open("GET", "https://raw.githubusercontent.com/DaveDLeague/quiz_gen/gh-pages/quiz_template.html", true);
     xmlHttp.send();
     xmlHttp.onreadystatechange = function() {
     	if(xmlHttp.readyState === XMLHttpRequest.DONE && xmlHttp.status === 200) {
@@ -302,6 +302,23 @@ function addFillInQuestion(){
 	questions.push(q);
 }
 
+function specialParseStr(str){
+	var nstr = "";
+	for(var i = 0; i < str.length; i++){
+		var c = str.charAt(i);
+		if(c == '\"'){
+			nstr += "\\\"";
+		}else if(c == '<'){
+			nstr += "&lt";
+		}else if(c == '\n' || c == ' '){
+			
+		}else{
+			nstr += c;
+		}
+	}
+	return nstr;
+}
+
 function parseStr(str){
 	var nstr = "";
 	for(var i = 0; i < str.length; i++){
@@ -318,7 +335,7 @@ function parseStr(str){
 			nstr += c;
 		}
 	}
-	return nstr;
+	return nstr.trim();
 }
 
 function buildQuestionString(){
@@ -352,7 +369,7 @@ function buildQuestionString(){
 			qs += "questions["+i+"].number="+(i+1)+";\n";
 			qs += "questions["+i+"].type=\"FILL_IN\";\n";
 			qs += "questions["+i+"].question=\""+parseStr(q.question)+"\";\n";
-			qs += "questions["+i+"].correctAnswers=\""+parseStr(q.answers)+"\";\n";
+			qs += "questions["+i+"].correctAnswers=\""+specialParseStr(q.answers.trim())+"\";\n";
 		}
 	}
 

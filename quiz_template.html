@@ -134,6 +134,23 @@ function submitQuiz(){
 	displayQuestion();
 }
 
+function specialParseStr(str){
+	var nstr = "";
+	for(var i = 0; i < str.length; i++){
+		var c = str.charAt(i);
+		if(c == '\"'){
+			nstr += "\\\"";
+		}else if(c == '<'){
+			nstr += "&lt";
+		}else if(c == '\n' || c == ' '){
+			
+		}else{
+			nstr += c;
+		}
+	}
+	return nstr.trim();
+}
+
 function scoreQuiz(){
 	for(var i = 0; i < questions.length; i++){
 		if(questions[i].type == "MULT_ANS"){
@@ -146,7 +163,8 @@ function scoreQuiz(){
 				score++;
 			}
 		}else if(questions[i].type == "FILL_IN"){
-			if(questions[i].correctAnswers.trim() == questions[i].userAnswers.trim()){
+			console.log(specialParseStr(questions[i].correctAnswers) +"\t" + specialParseStr(questions[i].userAnswers));
+			if(questions[i].correctAnswers == specialParseStr(questions[i].userAnswers)){
 				questions[i].isCorrect = true;
 				score++;
 			}
