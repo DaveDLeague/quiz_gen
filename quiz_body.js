@@ -327,6 +327,8 @@ function parseStr(str){
 			nstr += "<br>"	
 		}else if(c == '\"'){
 			nstr += "\\\"";
+		}else if(c == ' '){
+			nstr += "&nbsp";	
 		}else if(c == '\t'){
 			nstr += "&nbsp&nbsp&nbsp&nbsp";
 		}else if(c == '<'){
