@@ -27,7 +27,7 @@ window.onload = function(){
 	qbody.appendChild(qButts);
 
 	var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", "https://raw.githubusercontent.com/DaveDLeague/quiz_gen/gh-pages/quiz_template.html", true);
+    xmlHttp.open("GET", "./quiz_template.html", true);
     xmlHttp.send();
     xmlHttp.onreadystatechange = function() {
     	if(xmlHttp.readyState === XMLHttpRequest.DONE && xmlHttp.status === 200) {
