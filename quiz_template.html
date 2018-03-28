@@ -163,8 +163,7 @@ function scoreQuiz(){
 				score++;
 			}
 		}else if(questions[i].type == "FILL_IN"){
-			console.log(specialParseStr(questions[i].correctAnswers) +"\t" + specialParseStr(questions[i].userAnswers));
-			if(questions[i].correctAnswers == specialParseStr(questions[i].userAnswers)){
+			if(specialParseStr(questions[i].correctAnswers) == specialParseStr(questions[i].userAnswers)){
 				questions[i].isCorrect = true;
 				score++;
 			}
